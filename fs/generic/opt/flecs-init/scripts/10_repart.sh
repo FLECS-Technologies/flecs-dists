@@ -44,7 +44,7 @@ if ((${MEM_TOTAL} <= 2097152)); then
   SWAP_REC=$((${MEM_TOTAL} * 2 * 1024))
 # 1.5 * RAM for <= 4GiB
 elif ((${MEM_TOTAL} <= 4194304)); then
-  SWAP_REC=$((${MEM_TOTAL} * 3 / 2 * 1024))
+  SWAP_REC=$((${MEM_TOTAL} * 3 * 512))
 # 1 * RAM otherwise
 else
   SWAP_REC=$((${MEM_TOTAL} * 1024))
@@ -73,15 +73,8 @@ n
 
 
 -$((SWAP_REC / 1024))K
-n
-
-
-
-t
-$((ROOT_PART + 1))
-19
 w
-"| fdisk ${DEVICE} >/dev/null 2>&1
+" | fdisk ${DEVICE} >/dev/null 2>&1 
 
 exit_if_failed "Could not resize root partition"
 
@@ -91,10 +84,22 @@ resize2fs ${FS} >/dev/null 2>&1
 
 exit_if_failed "Could not grow root file system"
 
-echo -n "Formatting swap... "
-mkswap `echo ${FS} | sed "s/${ROOT_PART}/$((ROOT_PART + 1))/g"`
-echo -n "Enabling swap... "
-swapon /dev/sda4
-exit_if_failed "Could not enable swap"
+if [ ${SWAP_REC} -ne 0 ]; then
+  echo "
+n
+
+
+
+t
+$((ROOT_PART + 1))
+19
+w
+"| fdisk ${DEVICE} >/dev/null 2>&1
+  echo -n "Formatting swap... "
+  mkswap `echo ${FS} | sed "s/${ROOT_PART}$/$((ROOT_PART + 1))/g"`
+  echo -n "Enabling swap... "
+  swapon `echo ${FS} | sed "s/${ROOT_PART}$/$((ROOT_PART + 1))/g"`
+  exit_if_failed "Could not enable swap"
+fi
 
 source ${DIRNAME}/common/done.sh
