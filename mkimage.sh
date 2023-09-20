@@ -74,6 +74,10 @@ while [ ! -z "${1}" ]; do
   esac
 done
 
+if [ -f "${DIRNAME}/.env" ]; then
+  source ${DIRNAME}/.env
+fi
+
 # distribution to build
 if [ -z "${DIST}" ]; then
   echo "No DIST specified" 1>&2

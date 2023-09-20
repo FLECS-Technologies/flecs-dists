@@ -36,3 +36,6 @@ source ${DIRNAME}/scripts/mount/${PART_SCHEME}/mount.sh
 source ${DIRNAME}/scripts/common/chroot_mount.sh
 source ${DIRNAME}/scripts/common/copy_skel.sh
 source ${DIRNAME}/scripts/common/copy_fs.sh
+if [ -f "${DIRNAME}/scripts/${VARIANT}/setup_variant.sh" ]; then
+  source ${DIRNAME}/scripts/${VARIANT}/setup_variant.sh
+fi
