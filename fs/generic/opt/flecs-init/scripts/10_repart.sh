@@ -17,10 +17,10 @@ DIRNAME=`dirname $(readlink -f ${0})`
 source ${DIRNAME}/common/vars.sh
 
 FS=`LANG=C mount | grep "on / " | sed 's/ .*//'`
-DEVICE=`echo -n ${FS} | sed 's/p\?[0-9]//'`
+DEVICE=`echo -n ${FS} | sed 's/p\?[0-9]$//'`
 
 echo -n "Searching root partition... "
-ROOT_PART=`echo -n ${FS} | grep -oE "[0-9]+"`
+ROOT_PART=`echo -n ${FS} | grep -oE "[0-9]+$"`
 exit_if_failed "Could not determine root partition number on ${DEVICE}"
 
 echo "Detected / on ${FS} (${DEVICE}, partition ${ROOT_PART})"
